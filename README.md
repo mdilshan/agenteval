@@ -105,4 +105,4 @@ integration are in. Planned: a default OpenAI judge subpackage, a CLI
 
 ## License
 
-TODO (MIT or Apache-2.0).
+[MIT](LICENSE).
