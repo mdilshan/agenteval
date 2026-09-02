@@ -1,0 +1,26 @@
+{
+  "name": "escalation",
+  "setup": { "escalation_mode": "call_asap" },
+  "cases": [
+    {
+      "name": "call_now_escalates",
+      "history": [{ "role": "user", "text": "hi" }],
+      "message": "can you call now?",
+      "expect": {
+        "tools_include": ["escalate_to_human"],
+        "meta_equals": { "escalated": true },
+        "reply_matches": "(?i)team member",
+        "judge": ["Tells the customer a person will call shortly"]
+      }
+    },
+    {
+      "name": "book_does_not_escalate",
+      "message": "i want to book",
+      "expect": {
+        "tools_include": ["check_availability"],
+        "tools_exclude": ["escalate_to_human"],
+        "meta_equals": { "escalated": false }
+      }
+    }
+  ]
+}
