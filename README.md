@@ -323,6 +323,31 @@ verdicts — and to treat the tool trace, not the agent's claims about
 itself, as the evidence for any criterion about an action. Override it
 only when you know what you are trading away.
 
+### Will an upgrade change my results?
+
+SemVer alone doesn't answer this for a judging library. A change can be
+perfectly API-compatible — compiles everywhere, breaks no signature — and
+still move every verdict: the judging prompt, how a `Turn` is laid out in
+it, how much of a tool result the judge is shown, how a verdict is parsed,
+how samples are voted.
+
+So that class is named explicitly here. A **verdict-affecting** change is
+anything that alters what the judge sees, or how a verdict is derived from
+its answer. The rules:
+
+- **Patch releases are verdict-neutral.** Bug fixes, docs, performance,
+  purely additive API. Upgrade freely — your pass rates will not move.
+- **Verdict-affecting changes land only in minor releases**, and are listed
+  at the top of `CHANGELOG.md` under a `Verdict-affecting` heading. If that
+  heading is absent from a release, judging did not change.
+- When you take a release that has one, re-baseline: re-run your suite and
+  your calibration set before trusting the new numbers.
+
+This is enforced, not just promised. A golden test in this repo pins the
+exact bytes the judge receives, so a verdict-affecting change fails CI
+until a maintainer acknowledges it — which is what keeps that changelog
+heading honest.
+
 ### Judge drift
 
 Two things decide every verdict: the prompt and the model. They are not

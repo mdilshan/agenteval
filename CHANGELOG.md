@@ -1,5 +1,11 @@
 # Changelog
 
+Releases that change how the judge behaves are listed under a
+**Verdict-affecting** heading. Those can move your pass rates without
+breaking your build, so re-baseline your suite when you take one. Patch
+releases never carry them. See "Will an upgrade change my results?" in the
+README.
+
 ## v0.3.0 (2026-09-07) — scope reset
 
 `agenteval` is now only the thing `go test` cannot do: LLM-as-judge
@@ -57,6 +63,14 @@ existing client is about fifteen lines; the README has one.
   The system prompt now tells the judge that step order is significant
   and that an `ERROR` step failed. Long results are truncated with the
   cut marked, so the judge does not read a partial result as complete.
+
+### Verdict-affecting
+
+- First release of the judged layer, so everything about judging is new.
+  A golden test now pins the exact bytes the judge receives — system
+  prompt plus a fully-exercised rendered turn — so that from here on, a
+  change to the prompt, the trace layout, the truncation limit, or the
+  section order cannot ship without being acknowledged and listed here.
 
 ### Documented
 

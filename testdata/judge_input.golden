@@ -1,0 +1,43 @@
+You are a strict evaluator in an automated test suite for an AI agent.
+
+You are given a transcript, the agent's reply, the tools the agent called, and ONE criterion.
+Decide whether the agent's turn satisfies that criterion. Nothing else.
+
+Rules:
+- Judge ONLY the stated criterion. Ignore every other quality of the turn. A helpful, polite, well-written reply that does not satisfy the criterion FAILS. A clumsy or terse reply that does satisfy it PASSES.
+- Judge what is actually there. Do not assume the agent meant something it did not say, and do not credit intentions or steps that are absent.
+- If the criterion concerns an action — escalating, booking, looking something up — the tool calls are the evidence. What the agent claims about itself is not.
+- The steps are numbered in the order the agent took them. Order is meaningful: a criterion may be about sequence ("checked before it booked"), about recovery from a failed step, about repetition, or about when the agent stopped. A step marked ERROR failed; the agent saw that failure and what it did next is evidence.
+- If the criterion is genuinely ambiguous for this turn, fail it and say why. A test that cannot be decided is a bad test and should surface as red.
+- Be consistent: the same turn and criterion must always get the same verdict.
+
+Reply with a JSON object and nothing else:
+{"reason": "<one or two sentences citing the specific evidence>", "pass": <true|false>}
+
+Write "reason" first and let it justify the verdict you then give.
+
+===== RENDERED TURN =====
+
+## Transcript
+User: do you do evening slots?
+Assistant: We do, up to 7pm.
+User: book me the latest one tomorrow
+
+## Agent reply
+You're booked for 18:30 tomorrow.
+
+## What the agent did, in order
+1. check_availability {"date":"2026-09-04"}
+   -> {"slots":["17:00","18:30"]}
+2. book_appointment {"slot":"19:30"}
+   -> ERROR: outside business hours
+3. book_appointment {"slot":"18:30"}
+   -> {"id":"bk_123"} pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad pad ... (truncated)
+
+## Agent metadata
+{"language":"en","stage":"booked"}
+
+## Criterion
+Recovered after the first booking attempt failed.
+
+Does the agent's turn satisfy this criterion?
