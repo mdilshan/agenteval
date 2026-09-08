@@ -11,6 +11,14 @@ import "context"
 // (temperature 0 on providers that expose it) and SHOULD return an error,
 // never empty text, when the call fails. That distinction matters: the
 // Judge treats an error as "no verdict" and never as the agent failing.
+//
+// It SHOULD also pin an immutable or dated model snapshot, never a
+// floating alias. Because the brain is pluggable and no provider is
+// bundled, this package never chooses a model and cannot pin one for you —
+// your implementation is the only place that decision exists, and no
+// lockfile covers it. A provider re-pointing an alias at new weights moves
+// your judged results with nothing changing on your side, so treat the
+// model ID as part of the test suite rather than as configuration.
 type Model interface {
 	Complete(ctx context.Context, req Request) (Response, error)
 }

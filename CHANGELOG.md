@@ -58,6 +58,15 @@ existing client is about fifteen lines; the README has one.
   and that an `ERROR` step failed. Long results are truncated with the
   cut marked, so the judge does not read a partial result as complete.
 
+### Documented
+
+- **Pin the judge model.** Because the brain is pluggable and nothing is
+  bundled, this package never chooses a model and cannot pin one — and no
+  lockfile reaches provider weights, so a re-pointed alias moves judged
+  results with nothing changing on the caller's side. The judging prompt
+  needs no mechanism here: Go module versions are immutable, so `go.mod`
+  already pins it.
+
 ### Added
 
 - `Judge.Assert` / `Refute` / `AssertAll` — `Refute` exists because models

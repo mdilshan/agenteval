@@ -323,6 +323,56 @@ verdicts — and to treat the tool trace, not the agent's claims about
 itself, as the evidence for any criterion about an action. Override it
 only when you know what you are trading away.
 
+### Judge drift
+
+Two things decide every verdict: the prompt and the model. They are not
+equally exposed.
+
+**The prompt is already pinned by your `go.mod`.** Go module versions are
+immutable, so a given version of this package always judges with the same
+prompt. The only thing that can change it is upgrading — which shows up as
+a `go.mod` diff like any other dependency change. Read the changelog when
+you bump it.
+
+**The model is pinned by nothing.** Because the brain is pluggable and no
+provider is bundled, this library never chooses a model and cannot pin one
+— your `Model` is the only place that decision exists. And no lockfile
+reaches provider weights: an alias can be re-pointed, or the same model ID
+re-served with new weights, and no Go tooling will ever see it.
+
+So the discipline is yours:
+
+- Use an **immutable or dated snapshot ID**, never a floating alias.
+- Treat the model ID as part of your test suite, not as configuration.
+  Changing it changes what your criteria mean.
+- A judge-model bump is **not** a routine upgrade. A newer, better model is
+  often *stricter*, so criteria that passed for a year start failing. Score
+  before and after with `Check` rather than `Assert`, so nothing gates, and
+  read the criteria that flipped instead of adopting a higher pass rate on
+  the assumption it is better — a judge that passes more may just be more
+  lenient.
+
+**Pinning cannot catch silent re-serving.** For that, keep a small
+calibration set: a handful of turns whose verdicts you are confident
+about, some obviously passing, some obviously failing, run against the
+*judge* rather than the agent.
+
+```go
+func TestJudgeStillAgreesWithMe(t *testing.T) {
+    j := agenteval.New(brain)
+
+    clear := agenteval.Turn{
+        Reply:     "A team member will call you within 5 minutes.",
+        ToolCalls: []agenteval.ToolCall{{Name: "escalate_to_human"}},
+    }
+    j.Assert(t, "Hands the conversation to a human", clear)
+    j.Refute(t, "States a specific price", clear)
+}
+```
+
+When those move, the judge drifted — and you know that before you start
+hunting a regression that was never in your agent.
+
 ### Cost
 
 Every `Assert` is a real model call. Keep judged criteria few and
